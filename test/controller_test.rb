@@ -21,4 +21,20 @@ describe Lotus::Controller do
       }.must_raise TypeError
     end
   end
+
+  describe '.share' do
+    it 'shares callbacks' do
+      action  = SharedController::Index.new
+      code, _ = action.call({})
+
+      code.must_equal 301
+    end
+
+    it 'shares included module' do
+      action  = SharedAuthenticationController::Index.new
+      code, _ = action.call({})
+
+      code.must_equal 401
+    end
+  end
 end

@@ -499,3 +499,44 @@ class StandaloneSession
     session[:age] = Time.now.year - 1982
   end
 end
+
+module Authentication
+  def self.included(base)
+    base.class_eval do
+      before :authenticate!
+    end
+  end
+
+  private
+  def authenticate!
+    throw 401
+  end
+end
+
+class SharedController
+  include Lotus::Controller
+
+  share do
+    before do
+      throw 301
+    end
+  end
+
+  action 'Index' do
+    def call(params)
+    end
+  end
+end
+
+class SharedAuthenticationController
+  include Lotus::Controller
+
+  share do
+    include Authentication
+  end
+
+  action 'Index' do
+    def call(params)
+    end
+  end
+end

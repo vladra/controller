@@ -5,9 +5,7 @@ module Lotus
     # @since 0.1.0
     module Dsl
       def self.included(base)
-        base.class_eval do
-          extend ClassMethods
-        end
+        base.extend ClassMethods
       end
 
       module ClassMethods
@@ -46,7 +44,24 @@ module Lotus
           const_get(name).tap do |klass|
             klass.class_eval { include ::Lotus::Action }
             klass.class_eval(&blk)
+
+            shares.each do |code|
+              klass.class_eval(&code)
+            end
           end
+        end
+
+        # Share behaviors across actions.
+        #
+        # Often a controller exposes a set of similar actions that needs similar
+        # behaviors.
+        def share(&blk)
+          shares.push(blk)
+        end
+
+        private
+        def shares
+          @shares ||= Array.new
         end
       end
     end
