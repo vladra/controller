@@ -36,6 +36,14 @@ module Lotus
         'text/html'                => :html
       }.freeze
 
+      # Default language
+      #
+      # @since x.x.x
+      # @api private
+      #
+      # @see Lotus::Action::Language
+      DEFAULT_LANGUAGE = 'en-US'.freeze
+
       # Return a copy of the configuration of the framework instance associated
       # with the given class.
       #
@@ -456,6 +464,35 @@ module Lotus
         end
       end
 
+      # Set a default fallback for all the requests without an Accept-Language
+      # header
+      #
+      # It defaults to `"en-US"`.
+      #
+      # @since x.x.x
+      #
+      # @see Lotus::Action::Language
+      # @see Lotus::Controller::Configuration::DEFAULT_LANGUAGE
+      #
+      # @example Getting the value
+      #   require 'lotus/controller'
+      #
+      #   Lotus::Controller.configuration.default_language # => "en-US"
+      #
+      # @example Setting the value
+      #   require 'lotus/controller'
+      #
+      #   Lotus::Controller.configure do
+      #     default_language 'it-IT'
+      #   end
+      def default_language(language = nil)
+        if language
+          @default_language = language
+        else
+          @default_language
+        end
+      end
+
       # Returns a format for the given mime type
       #
       # @param mime_type [#to_s,#to_str] A mime type
@@ -495,6 +532,7 @@ module Lotus
           c.action_module      = action_module
           c.modules            = modules.dup
           c.formats            = formats.dup
+          c.default_language   = default_language
           c.default_format     = default_format
           c.default_charset    = default_charset
         end
@@ -519,6 +557,7 @@ module Lotus
         @handled_exceptions = {}
         @modules            = []
         @formats            = DEFAULT_FORMATS.dup
+        @default_language   = DEFAULT_LANGUAGE
         @default_format     = nil
         @default_charset    = nil
         @action_module      = ::Lotus::Action
@@ -554,6 +593,7 @@ module Lotus
       attr_accessor :formats
       attr_writer :action_module
       attr_writer :modules
+      attr_writer :default_language
       attr_writer :default_format
       attr_writer :default_charset
     end

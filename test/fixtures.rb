@@ -1,5 +1,6 @@
 require 'lotus/router'
 require 'lotus/action/glue'
+require 'lotus/action/language'
 
 HTTP_TEST_STATUSES = {
   100 => 'Continue',
@@ -523,6 +524,52 @@ class ParamsValidationAction
 
   def call(params)
     halt 400 unless params.valid?
+  end
+end
+
+module Language
+  class Show
+    include Lotus::Action
+    include Lotus::Action::Language
+
+    def call(params)
+      self.body = language
+    end
+  end
+
+  class Accept
+    include Lotus::Action
+    include Lotus::Action::Language
+
+    def call(params)
+      headers['X-Accept-DA'] = accept_language?('da').to_s
+      headers['X-Accept-EN'] = accept_language?('en').to_s
+      headers['X-Accept-FR'] = accept_language?('fr').to_s
+
+      self.body = 'OK'
+    end
+  end
+end
+
+module Enconding
+  class Show
+    include Lotus::Action
+
+    def call(params)
+      self.body = encoding
+    end
+  end
+
+  class Accept
+    include Lotus::Action
+
+    def call(params)
+      headers['X-Accept-DA'] = accept_encoding?('da').to_s
+      headers['X-Accept-EN'] = accept_encoding?('en').to_s
+      headers['X-Accept-FR'] = accept_encoding?('fr').to_s
+
+      self.body = 'OK'
+    end
   end
 end
 

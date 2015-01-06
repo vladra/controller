@@ -5,7 +5,7 @@ describe 'Method visibility' do
     @action = VisibilityAction.new
   end
 
-  it 'x' do
+  it 'tests method visibility for actions' do
     status, headers, body = @action.call({})
 
     status.must_equal                    201

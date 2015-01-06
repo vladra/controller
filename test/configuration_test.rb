@@ -227,6 +227,24 @@ describe Lotus::Controller::Configuration do
     end
   end
 
+  describe '#default_language' do
+    describe "when not previously set" do
+      it 'returns "en-US"' do
+        @configuration.default_language.must_equal 'en-US'
+      end
+    end
+
+    describe "when set" do
+      before do
+        @configuration.default_language 'it-IT'
+      end
+
+      it 'returns the value' do
+        @configuration.default_language.must_equal 'it-IT'
+      end
+    end
+  end
+
   describe '#format_for' do
     it 'returns a symbol from the given mime type' do
       @configuration.format_for('*/*').must_equal                      :all
@@ -277,6 +295,7 @@ describe Lotus::Controller::Configuration do
       @configuration.format custom: 'custom/format'
       @configuration.default_format :html
       @configuration.default_charset 'latin1'
+      @configuration.default_language 'es'
       @config = @configuration.duplicate
     end
 
@@ -288,6 +307,7 @@ describe Lotus::Controller::Configuration do
       @config.send(:formats).must_equal     @configuration.send(:formats)
       @config.default_format.must_equal     @configuration.default_format
       @config.default_charset.must_equal    @configuration.default_charset
+      @config.default_language.must_equal   @configuration.default_language
     end
 
     it "doesn't affect the original configuration" do
@@ -298,6 +318,7 @@ describe Lotus::Controller::Configuration do
       @config.format another: 'another/format'
       @config.default_format :json
       @config.default_charset 'utf-8'
+      @config.default_language 'fr'
 
       @config.handle_exceptions.must_equal           false
       @config.handled_exceptions.must_equal          Hash[ArgumentError => 400]
@@ -306,6 +327,7 @@ describe Lotus::Controller::Configuration do
       @config.format_for('another/format').must_equal :another
       @config.default_format.must_equal               :json
       @config.default_charset.must_equal              'utf-8'
+      @config.default_language.must_equal             'fr'
 
       @configuration.handle_exceptions.must_equal  true
       @configuration.handled_exceptions.must_equal Hash[]
@@ -314,6 +336,7 @@ describe Lotus::Controller::Configuration do
       @configuration.format_for('another/format').must_be_nil
       @configuration.default_format.must_equal     :html
       @configuration.default_charset.must_equal    'latin1'
+      @configuration.default_language.must_equal   'es'
     end
   end
 
@@ -326,6 +349,7 @@ describe Lotus::Controller::Configuration do
       @configuration.format another: 'another/format'
       @configuration.default_format :another
       @configuration.default_charset 'kor-1'
+      @configuration.default_language 'jp'
 
       @configuration.reset!
     end
@@ -338,6 +362,7 @@ describe Lotus::Controller::Configuration do
       @configuration.send(:formats).must_equal(Lotus::Controller::Configuration::DEFAULT_FORMATS)
       @configuration.default_format.must_be_nil
       @configuration.default_charset.must_be_nil
+      @configuration.default_language.must_equal 'en-US'
     end
   end
 end

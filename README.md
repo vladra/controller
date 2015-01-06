@@ -954,6 +954,11 @@ Lotus::Controller.configure do
   #
   format custom: 'application/custom'
 
+  # Define a default language
+  # Argument: string, defaults to `en-US`
+  #
+  default_language 'it-IT'
+
   # Define a default format to return in case of HTTP request with `Accept: */*`
   # If not defined here, it will return Rack's default: `application/octet-stream`
   # Argument: symbol, it should be already known. defaults to `nil`
