@@ -37,6 +37,7 @@ module Lotus
       # @since 0.3.2
       def renderable?
         !_requires_no_body? &&
+          !sending_file?    &&
           !ADDITIONAL_HTTP_STATUSES_WITHOUT_BODY.include?(@_status)
       end
 

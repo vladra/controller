@@ -217,6 +217,22 @@ module Lotus
         @_body = body
       end
 
+      class ::Lotus::Action::Rack::File < ::Rack::File
+        def empty?
+          false
+        end
+      end
+
+      def send_file(path)
+        file      = Lotus::Action::Rack::File.new(nil)
+        file.path = path.to_s
+        result    = file.serving(@_env)
+
+        halt 200, result[2]
+      rescue Errno::ENOENT
+        halt 404
+      end
+
       # Check if the current request is a HEAD
       #
       # @return [TrueClass,FalseClass] the result of the check
@@ -224,6 +240,10 @@ module Lotus
       # @since 0.3.2
       def head?
         @_env[REQUEST_METHOD] == HEAD
+      end
+
+      def sending_file?
+        @_body.is_a?(::Rack::File)
       end
     end
   end
