@@ -1,6 +1,7 @@
 require 'hanami/utils/class'
 require 'hanami/utils/kernel'
 require 'hanami/utils/string'
+require 'hanami/action/mime'
 
 module Hanami
   module Controller
@@ -39,8 +40,8 @@ module Hanami
       # @since 0.2.0
       # @api private
       DEFAULT_FORMATS = {
-        'application/octet-stream' => :all,
-        '*/*'                      => :all,
+        'application/octet-stream' => Action::Mime::FALLBACK_FORMAT,
+        '*/*'                      => Action::Mime::FALLBACK_FORMAT,
         'text/html'                => :html
       }.freeze
 

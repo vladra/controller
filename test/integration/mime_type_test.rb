@@ -315,7 +315,7 @@ describe 'Restricted Accept' do
     end
 
     describe 'when not accepted' do
-      let(:accept) { 'application/xml' }
+      let(:accept) { 'text/xml,application/xml,application/xhtml+xml,text/html;q=0.9,text/plain;q=0.8,*/*;q=0.5' }
 
       it 'accepts selected mime types' do
         @response.status.must_equal 406

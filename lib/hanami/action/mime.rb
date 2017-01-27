@@ -41,6 +41,13 @@ module Hanami
       # @api private
       DEFAULT_CHARSET = 'utf-8'.freeze
 
+      # This is the fallback format, used when the incoming Accept header isn't clear.
+      # For instance, when it's missing or it's <tt>*/*</tt>
+      #
+      # @since x.x.x
+      # @api private
+      FALLBACK_FORMAT = :all
+
       # Most commom mime types used for responses
       #
       # @since 0.9.0
@@ -154,14 +161,11 @@ module Hanami
         #   # When called with "application/json" => 200
         #   # When called with "application/xml"  => 406
         def accept(*formats)
-          mime_types = formats.map do |format|
-            format_to_mime_type(format)
-          end
+          formats << FALLBACK_FORMAT
+          formats.uniq!
 
           before do
-            unless mime_types.find {|mt| accept?(mt) }
-              halt 406
-            end
+            halt 406 unless formats.include?(format)
           end
         end
       end
