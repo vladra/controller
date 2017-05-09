@@ -1,10 +1,21 @@
 require 'test_helper'
+require 'json'
 
 describe Hanami::Action do
   class FormatController
     class Lookup
       include Hanami::Action
       configuration.handle_exceptions = false
+
+      def call(params)
+      end
+    end
+
+    class JsonLookup
+      include Hanami::Action
+      configuration.handle_exceptions = false
+      configuration.default_request_format :html
+      accept :json
 
       def call(params)
       end
@@ -66,6 +77,16 @@ describe Hanami::Action do
 
       @action.format.must_equal    :html
       headers['Content-Type'].must_equal 'text/html; charset=utf-8'
+      status.must_equal                   200
+    end
+
+    it "accepts 'application/json, text/plain, */*' and returns :json" do
+      @action = FormatController::JsonLookup.new
+
+      status, headers, _ = @action.call({ 'HTTP_ACCEPT' => 'application/json, text/plain, */*' })
+
+      @action.format.must_equal    :json
+      headers['Content-Type'].must_equal 'application/json; charset=utf-8'
       status.must_equal                   200
     end
 
