@@ -22,6 +22,12 @@ module Hanami
       # @api private
       CONTENT_TYPE         = 'Content-Type'.freeze
 
+      # The header key that returns user agent from Rack env
+      #
+      # @since x.x.x
+      # @api private
+      USER_AGENT           = 'HTTP_USER_AGENT'.freeze
+
       # The default mime type for an incoming HTTP request
       #
       # @since 0.1.0
@@ -568,8 +574,7 @@ module Hanami
       def best_q_match(q_value_header, available_mimes)
         values = ::Rack::Utils.q_values(q_value_header)
         values = values.map do |req_mime, quality|
-          if req_mime == DEFAULT_ACCEPT
-            # See https://github.com/hanami/controller/issues/167
+          if user_agent_ie8? && req_mime == DEFAULT_ACCEPT
             match = default_content_type
           else
             match = available_mimes.find { |am| ::Rack::Mime.match?(am, req_mime) }
@@ -592,6 +597,12 @@ module Hanami
         end.last
 
         value.first if value
+      end
+
+      # @since x.x.x
+      # @api private
+      def user_agent_ie8?
+        @_env[USER_AGENT] =~ /MSIE 8[\.0-9]{0,}/
       end
     end
   end
