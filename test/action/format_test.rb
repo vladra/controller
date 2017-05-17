@@ -80,6 +80,18 @@ describe Hanami::Action do
       status.must_equal                   200
     end
 
+    it "accepts default IE8 header accept value and returns :html" do
+      ie8_accept = 'image/jpeg, application/x-ms-application, image/gif, application/xaml+xml, image/pjpeg, application/x-ms-xbap, application/x-shockwave-flash, application/msword, */*'
+      status, headers, _ = @action.call({
+        'HTTP_ACCEPT' => ie8_accept,
+        'HTTP_USER_AGENT' => 'Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 6.0; Trident/4.0)'
+      })
+
+      @action.format.must_equal    :html
+      headers['Content-Type'].must_equal 'text/html; charset=utf-8'
+      status.must_equal                   200
+    end
+
     it "accepts 'application/json, text/plain, */*' and returns :json" do
       @action = FormatController::JsonLookup.new
 
